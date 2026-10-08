@@ -47,6 +47,7 @@ def run_probe(config, credentials):
                 "LANG": "C.UTF-8",
                 "PYTHONNOUSERSITE": "1",
                 "OCI_DEVELOPER_TOOL_CONFIGURATION_FILE_PATH": os.devnull,
+                "OCI_HEADER_PARSING_ERROR_MAX_RETRIES": "0",
             },
             input=json.dumps(payload),
             text=True,

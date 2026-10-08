@@ -31,6 +31,7 @@ def test_probe_gets_only_signing_secret_over_stdin(credential_environment, monke
     assert credentials.presenter_password not in kwargs["input"]
     assert "OCI_CONFIG_FILE" not in kwargs["env"]
     assert "HTTPS_PROXY" not in kwargs["env"]
+    assert kwargs["env"]["OCI_HEADER_PARSING_ERROR_MAX_RETRIES"] == "0"
     assert kwargs["timeout"] == 60
     assert kwargs["stderr"] == subprocess.DEVNULL
 
