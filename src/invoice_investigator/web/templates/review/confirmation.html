@@ -1,0 +1,20 @@
+{% extends 'review/base.html' %}
+{% block content %}
+<a href="{% url 'case-detail' case.id %}">Back to case</a>
+<section class="confirmation mt-4">
+  <p class="eyebrow">{{ case.id }} · Revision {{ proposal.revision.number }}</p>
+  <h1>Approve this follow-up?</h1>
+  <div class="card p-4 my-3">
+    <h2 class="h4">{{ proposal.payload.title }}</h2>
+    <p>{{ proposal.payload.body }}</p>
+    <p>Destination: <strong>{{ proposal.payload.destination_role }}</strong></p>
+    <ul>{% for link in links %}<li><a href="{{ link.url }}">{{ link.label }}</a></li>{% endfor %}</ul>
+  </div>
+  <p>This creates one task in the demo register. It sends no email and authorizes no payment.</p>
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}{{ form.digest }}{{ form.digest.errors }}
+    <div class="my-3">{{ form.confirm }} {{ form.confirm.label_tag }}{{ form.confirm.errors }}</div>
+    <button class="btn btn-primary" type="submit">Approve and create task</button>
+  </form>
+</section>
+{% endblock %}

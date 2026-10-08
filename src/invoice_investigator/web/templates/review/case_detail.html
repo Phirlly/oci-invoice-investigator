@@ -1,0 +1,73 @@
+{% extends 'review/base.html' %}{% load static %}
+{% block content %}
+<a href="{% url 'case-list' %}">All cases</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center my-3 gap-2">
+  <div><p class="eyebrow mb-1">{{ case.id }} · Revision {{ revision.number }}</p>
+    <h1>{{ case.title }}</h1></div>
+  <span class="badge text-bg-light border p-3">{{ conclusion }}</span>
+</div>
+<p class="source-note">Synthetic sample · Fields were supplied by hand.
+  Findings below come from the deterministic comparison; extraction and agent execution are not available yet.</p>
+<div class="row g-4">
+  <section class="col-lg-6" aria-labelledby="invoice-heading">
+    <div class="card p-3">
+      <h2 id="invoice-heading" class="h4">Invoice {{ revision.invoice.invoice_id }}</h2>
+      <p>{{ revision.invoice.total }} USD · {{ revision.invoice.issued_on }}</p>
+      <div id="pdf-view" data-document="{% url 'document' case.id revision.number 'invoice.pdf' %}"
+           data-assets="{% static 'review/vendor/pdfjs/' %}">
+        <div class="d-flex gap-2 align-items-center mb-2">
+          <button id="pdf-prev" type="button" class="btn btn-sm btn-outline-secondary" disabled>Previous page</button>
+          <span id="pdf-status" role="status" aria-live="polite">Loading invoice…</span>
+          <button id="pdf-next" type="button" class="btn btn-sm btn-outline-secondary" disabled>Next page</button>
+        </div>
+        <canvas id="invoice-canvas" role="img" aria-label="Invoice PDF page"></canvas>
+      </div>
+      <a class="mt-3" href="{% url 'record' case.id revision.number 'normalized_invoice.json' %}">Read invoice fields as text</a>
+    </div>
+  </section>
+  <section class="col-lg-6" aria-labelledby="findings-heading">
+    <div class="card p-4 mb-3">
+      <h2 id="findings-heading" class="h4">Findings</h2>
+      {% for line in lines %}
+      <dl class="row border-bottom pb-2">
+        <dt class="col-7">Supported unit price · Line {{ line.line_id }}</dt>
+        <dd class="col-5">{{ line.expected_unit_price|default_if_none:"Unresolved" }} USD</dd>
+        <dt class="col-7">Supported received quantity</dt>
+        <dd class="col-5">{{ line.received_quantity|default_if_none:"Unresolved" }} EA</dd>
+      </dl>
+      <ul class="evidence-links">{% for link in line.price_links %}
+        <li><a href="{{ link.url }}">{{ link.label }}</a></li>
+      {% endfor %}</ul>
+      {% endfor %}
+      {% for finding in findings %}
+        <h3 class="h6">Line {{ finding.line_id }} · {{ finding.title }}</h3>
+        <p>{{ finding.detail }}</p>
+        <ul class="evidence-links">{% for link in finding.links %}<li><a href="{{ link.url }}">{{ link.label }}</a></li>{% endfor %}</ul>
+      {% empty %}<p>No discrepancy found within the supplied records.</p>{% endfor %}
+      <a href="{% url 'record' case.id revision.number 'purchasing.json' %}">View purchase order, amendments and receipts</a>
+      {% if has_amendment %}
+      <a class="mt-2" href="{% url 'document' case.id revision.number 'amendment.pdf' %}">Download supporting amendment PDF</a>
+      {% endif %}
+    </div>
+    <div class="card p-4">
+      <h2 class="h4">Proposed follow-up</h2>
+      {% for proposal in proposals %}
+        <p>{{ proposal.payload.body }}</p>
+        <p class="small">Destination: {{ proposal.payload.destination_role }} · Internal demo register</p>
+        <a class="btn btn-primary align-self-start" href="{% url 'confirmation' case.id proposal.id %}">Review proposed task</a>
+      {% empty %}<p>No receiving follow-up is needed.</p>{% endfor %}
+    </div>
+  </section>
+</div>
+<section class="mt-4" aria-labelledby="tasks-heading">
+  <h2 id="tasks-heading" class="h4">Saved tasks</h2>
+  {% for task in tasks %}
+  <article class="card p-3 mb-2" id="task-{{ task.id }}">
+    <h3 class="h6">{{ task.approval.proposal.payload.title }}</h3>
+    <p>{{ task.approval.proposal.payload.body }}</p>
+    <p class="small mb-0">Task {{ task.id }} · Approved by {{ task.approval.reviewer.username }} · {{ task.created_at }}</p>
+  </article>
+  {% empty %}<p class="text-secondary">No task has been approved.</p>{% endfor %}
+</section>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'review/pdf-view.mjs' %}"></script>{% endblock %}

@@ -1,0 +1,61 @@
+[project]
+name = "oci-invoice-investigator"
+version = "0.1.0"
+description = "Synthetic invoice evidence comparison for an OCI agent demo"
+readme = "README.md"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "Django==5.2.18",
+  "psycopg[binary]==3.3.6",
+  "django-axes==8.3.1",
+  "whitenoise==6.12.0",
+]
+
+[project.scripts]
+invoice-investigator = "invoice_investigator.cli:main"
+
+[build-system]
+requires = ["uv_build==0.12.19"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+  "pytest>=9.1.1,<10",
+  "pytest-cov>=6,<8",
+  "pytest-timeout>=2.4,<3",
+  "ruff>=0.14.7,<0.20",
+  "reportlab>=5.0.1,<6",
+  "detect-secrets>=1.5,<2",
+  "pytest-django==4.14.0",
+  "playwright==1.63.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit", "tests/contracts"]
+addopts = [
+  "--disable-plugin-autoload", "-p", "pytest_cov", "-p", "pytest_timeout",
+  "--import-mode=importlib", "--strict-config", "--strict-markers",
+]
+timeout = 10
+session_timeout = 120
+
+[tool.coverage.run]
+branch = true
+source = ["invoice_investigator"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.uv.build-backend]
+module-name = "invoice_investigator"
+source-include = ["uv.lock", "examples/**", "tests/**", "tools/**"]
+source-exclude = ["/docs", "/PLAN.md", "/templates", "/tmp", "/.cache", "/.coverage"]

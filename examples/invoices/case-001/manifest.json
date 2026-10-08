@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "case_id": "case-001",
+  "case_version": 1,
+  "files": {
+    "invoice.pdf": "68811720a1a27e07ba5c2b72b90d6119a07dfc87fd558bde94c0147409a0d779",
+    "purchasing.json": "55fb1ee5a3ef38b93f771a73d30246148ca5ea7bd455e1310bfbfb15ec140a34"
+  }
+}

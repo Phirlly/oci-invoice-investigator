@@ -1,0 +1,10 @@
+{
+  "conclusion": "needs_review",
+  "expected_unit_price": "12.00",
+  "received_quantity": 80,
+  "missing_receipt_quantity": 20,
+  "finding_codes": [
+    "receipt_shortfall"
+  ]
+}
+

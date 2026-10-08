@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "case_id": "case-002",
+  "case_version": 1,
+  "invoice_id": "INV-1002",
+  "issued_on": "2026-09-15",
+  "critical_fields_confirmed": true,
+  "total": "1200.00",
+  "lines": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "quantity": 100,
+      "unit_price": "12.00",
+      "line_total": "1200.00"
+    }
+  ]
+}
+

@@ -1,0 +1,19 @@
+{% extends 'review/base.html' %}
+{% block title %}Sign in · Invoice Investigator{% endblock %}
+{% block content %}
+<section class="sign-in mx-auto">
+  <p class="eyebrow">Reviewer workspace</p><h1>Sign in</h1>
+  <p>Review invoice evidence and approve a follow-up request.</p>
+  <form method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="mb-3"><label class="form-label" for="id_username">Username</label>
+      <input class="form-control" id="id_username" name="username" maxlength="150"
+             autocomplete="username" required autofocus></div>
+    <div class="mb-3"><label class="form-label" for="id_password">Password</label>
+      <input class="form-control" id="id_password" name="password" type="password"
+             autocomplete="current-password" required></div>
+    <input name="next" type="hidden" value="{{ next }}">
+    <button class="btn btn-primary" type="submit">Sign in</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'review/base.html' %}
+{% block content %}
+<h1>Sign-in temporarily paused</h1>
+<p>Too many failed attempts. Wait 15 minutes before trying again.</p>
+<a href="{% url 'login' %}">Return to sign in</a>
+{% endblock %}

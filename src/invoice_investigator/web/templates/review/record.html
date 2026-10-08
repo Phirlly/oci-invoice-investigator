@@ -1,0 +1,7 @@
+{% extends 'review/base.html' %}
+{% block content %}
+<a href="{% url 'case-detail' revision.case_id %}">Back to case</a>
+<h1 class="h3 mt-3">Evidence: {{ name }}</h1>
+<p>{{ revision.case_id }} · Revision {{ revision.number }} · Location <code>{{ pointer }}</code></p>
+<pre class="record p-3">{{ record }}</pre>
+{% endblock %}

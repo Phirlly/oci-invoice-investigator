@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "case_id": "case-001",
+  "case_version": 1,
+  "version": 1,
+  "evidence_cutoff": "2026-09-16T00:00:00Z",
+  "amendments_complete": true,
+  "receipts_complete": true,
+  "authorized_approvers": [
+    "purchasing-01"
+  ],
+  "po_lines": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "quantity": 100,
+      "unit_price": "10.00"
+    }
+  ],
+  "amendments": [],
+  "receipts": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "id": "RCV-001",
+      "version": 1,
+      "quantity": 100,
+      "status": "accepted",
+      "received_at": "2026-09-14T12:00:00Z"
+    }
+  ]
+}
+

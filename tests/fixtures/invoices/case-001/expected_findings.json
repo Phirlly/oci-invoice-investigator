@@ -1,0 +1,8 @@
+{
+  "conclusion": "no_discrepancy",
+  "expected_unit_price": "10.00",
+  "received_quantity": 100,
+  "missing_receipt_quantity": 0,
+  "finding_codes": []
+}
+

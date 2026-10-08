@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "case_id": "case-002",
+  "case_version": 1,
+  "version": 1,
+  "evidence_cutoff": "2026-09-16T00:00:00Z",
+  "amendments_complete": true,
+  "receipts_complete": true,
+  "authorized_approvers": [
+    "purchasing-01"
+  ],
+  "po_lines": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "quantity": 100,
+      "unit_price": "10.00"
+    }
+  ],
+  "amendments": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "id": "AMD-001",
+      "version": 1,
+      "unit_price": "12.00",
+      "status": "approved",
+      "approved_by": "purchasing-01",
+      "approved_on": "2026-09-01",
+      "effective_from": "2026-09-01",
+      "effective_until": null,
+      "supersedes_id": null
+    }
+  ],
+  "receipts": [
+    {
+      "po_id": "PO-2042",
+      "line_id": "1",
+      "item_code": "NIC-10G",
+      "supplier_id": "SUP-001",
+      "currency": "USD",
+      "unit": "EA",
+      "id": "RCV-001",
+      "version": 1,
+      "quantity": 80,
+      "status": "accepted",
+      "received_at": "2026-09-14T12:00:00Z"
+    }
+  ]
+}
+

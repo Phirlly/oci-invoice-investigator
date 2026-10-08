@@ -1,0 +1,17 @@
+{% extends 'review/base.html' %}
+{% block content %}
+<p class="eyebrow">Evidence review</p><h1>Your cases</h1>
+<p class="text-secondary">Choose a synthetic invoice to inspect its evidence and findings.</p>
+<div class="row g-4 mt-1">
+{% for case in cases %}
+  <div class="col-md-6 col-xl-4"><article class="card h-100">
+    <div class="card-body p-4">
+      <p class="small text-secondary">{{ case.id }} · Revision {{ case.current_revision }}</p>
+      <h2 class="h4">{{ case.title }}</h2>
+      <p>Hand-normalized sample with a deterministic evidence comparison.</p>
+      <a class="btn btn-primary" href="{% url 'case-detail' case.id %}">Review {{ case.id }}</a>
+    </div>
+  </article></div>
+{% empty %}<p>No cases are assigned to your account.</p>{% endfor %}
+</div>
+{% endblock %}

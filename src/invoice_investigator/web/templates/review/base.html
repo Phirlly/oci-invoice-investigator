@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Invoice Exception Investigator{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'review/vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'review/workbench.css' %}">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="navbar border-bottom px-3 py-3">
+  <a class="navbar-brand" href="/">Invoice Exception Investigator</a>
+  {% if user.is_authenticated %}
+  <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+    <span class="me-3">{{ user.username }}</span>
+    <button class="btn btn-outline-secondary btn-sm" type="submit">Sign out</button>
+  </form>
+  {% endif %}
+</header>
+<main id="main" class="container-fluid py-4 px-md-5" tabindex="-1">
+{% block content %}{% endblock %}
+</main>
+<footer class="px-4 py-3 border-top text-secondary small">
+  Synthetic demonstration · Internal follow-up tasks only
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>
