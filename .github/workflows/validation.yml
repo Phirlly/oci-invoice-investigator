@@ -1,0 +1,50 @@
+name: Validation
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    name: Validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      UV_CACHE_DIR: ${{ github.workspace }}/.cache/uv
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: '0.12.19'
+          python-version: '3.12.12'
+          enable-cache: false
+      - name: Install locked dependencies
+        run: uv sync --locked
+      - name: Lint
+        run: uv run --locked ruff check .
+      - name: Check formatting
+        run: uv run --locked ruff format --check .
+      - name: Check secrets
+        run: uv run --locked python tools/check_secrets.py
+      - name: Offline rules, contracts and CLI
+        run: uv run --locked pytest tests/unit tests/contracts tests/integration/test_offline_cli.py --cov=invoice_investigator --cov-branch --cov-fail-under=0 --durations=10
+      - name: Install Chromium and system dependencies
+        run: uv run --locked playwright install --with-deps chromium
+      - name: PostgreSQL, browser and aggregate coverage
+        run: uv run --locked python tools/run_web_checks.py tests/integration/case_storage tests/integration/web tests/ui --cov=invoice_investigator --cov-branch --cov-append --durations=10
+      - name: Build distributions
+        run: uv build
+      - name: Verify packaged files and notices
+        run: uv run --locked python tools/verify_distribution.py
+      - name: Verify fresh installed wheel
+        run: uv run --locked python tools/check_installed_wheel.py
+      - name: Audit locked dependencies
+        run: uv audit --locked
