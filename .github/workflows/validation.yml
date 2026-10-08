@@ -34,12 +34,12 @@ jobs:
         run: uv run --locked ruff format --check .
       - name: Check secrets
         run: uv run --locked python tools/check_secrets.py
-      - name: Offline rules, contracts and CLI
-        run: uv run --locked pytest tests/unit tests/contracts tests/integration/test_offline_cli.py --cov=invoice_investigator --cov-branch --cov-fail-under=0 --durations=10
+      - name: Offline rules, deployment contracts and CLI
+        run: uv run --locked pytest tests/unit tests/contracts tests/deployment tests/integration/test_offline_cli.py --cov=invoice_investigator --cov=deployment --cov-branch --cov-fail-under=0 --durations=10
       - name: Install Chromium and system dependencies
         run: uv run --locked playwright install --with-deps chromium
       - name: PostgreSQL, browser and aggregate coverage
-        run: uv run --locked python tools/run_web_checks.py tests/integration/case_storage tests/integration/web tests/ui --cov=invoice_investigator --cov-branch --cov-append --durations=10
+        run: uv run --locked python tools/run_web_checks.py tests/integration/case_storage tests/integration/web tests/ui --cov=invoice_investigator --cov=deployment --cov-branch --cov-append --durations=10
       - name: Build distributions
         run: uv build
       - name: Verify packaged files and notices

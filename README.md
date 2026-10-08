@@ -62,6 +62,12 @@ and verification status; passwords stay out of output.
 This deployment workflow is not available yet. The existing
 [GitHub workflow](.github/workflows/validation.yml) runs code validation only.
 
+Engineering preflight: set `DEPLOYMENT_CONFIG` to JSON matching the
+[configuration example](deployment/configuration.example.json), plus secret environment
+values `OCI_API_PRIVATE_KEY`, `OPENAI_API_KEY`, `PRESENTER_PASSWORD` and optional
+`OCI_KEY_PASSPHRASE`. Run `uv run --locked python -m deployment`; add `--check-oci`
+for bounded identity/compartment reads. It never provisions or reports demo readiness.
+
 ## Scope
 
 Synthetic invoices and supplied PO, amendment and receipt records; one supplier/PO,

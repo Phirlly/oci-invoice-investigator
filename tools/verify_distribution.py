@@ -25,6 +25,13 @@ def distribution_contents():
         verify_packaged_resources(archive.read, notices, ROOT, STEM + ".dist-info/licenses/")
         package_metadata = BytesParser().parsebytes(archive.read(STEM + ".dist-info/METADATA"))
         assert set(package_metadata.get_all("License-File", [])) == set(PROJECT["license-files"])
+
+        def normalize(value):
+            return value.lower().replace("_", "-").replace(" ", "")
+
+        assert {normalize(item) for item in package_metadata.get_all("Requires-Dist", [])} == {
+            normalize(item) for item in PROJECT["dependencies"]
+        }, "Wheel dependencies must contain only the declared application runtime."
     code = {
         str(path.relative_to(ROOT / "src"))
         for path in set((ROOT / "src").rglob("*.py")) | resources
@@ -43,6 +50,8 @@ def distribution_contents():
         }
         | {str(path.relative_to(ROOT)) for path in resources}
         | {str(path.relative_to(ROOT)) for path in notices}
+        | {str(path.relative_to(ROOT)) for path in (ROOT / "deployment").glob("*.py")}
+        | {"deployment/configuration.example.json"}
     )
     with tarfile.open(source) as archive:
         verify_packaged_resources(
