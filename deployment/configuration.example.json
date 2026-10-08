@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "tenancy_ocid": "ocid1.tenancy.oc1..replacewithyourtenancy",
+  "user_ocid": "ocid1.user.oc1..replacewithyouruser",
+  "fingerprint": "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00",
+  "region": "us-ashburn-1",
+  "compartment_ocid": "ocid1.compartment.oc1..replacewithyourcompartment",
+  "presenter_username": "demo.reviewer"
+}

@@ -20,7 +20,9 @@ requires = ["uv_build==0.12.19"]
 build-backend = "uv_build"
 
 [dependency-groups]
+deployment = ["oci==2.187.2", "cryptography==50.0.2"]
 dev = [
+  {include-group = "deployment"},
   "pytest>=9.1.1,<10",
   "pytest-cov>=6,<8",
   "pytest-timeout>=2.4,<3",
@@ -32,7 +34,8 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests/unit", "tests/contracts"]
+testpaths = ["tests/unit", "tests/contracts", "tests/deployment"]
+pythonpath = ["."]
 addopts = [
   "--disable-plugin-autoload", "-p", "pytest_cov", "-p", "pytest_timeout",
   "--import-mode=importlib", "--strict-config", "--strict-markers",
@@ -42,7 +45,7 @@ session_timeout = 120
 
 [tool.coverage.run]
 branch = true
-source = ["invoice_investigator"]
+source = ["invoice_investigator", "deployment"]
 
 [tool.coverage.report]
 fail_under = 90
@@ -57,5 +60,5 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.uv.build-backend]
 module-name = "invoice_investigator"
-source-include = ["uv.lock", "examples/**", "tests/**", "tools/**"]
+source-include = ["uv.lock", "examples/**", "tests/**", "tools/**", "deployment/**"]
 source-exclude = ["/docs", "/PLAN.md", "/templates", "/tmp", "/.cache", "/.coverage"]

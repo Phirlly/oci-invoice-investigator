@@ -35,21 +35,15 @@ def run(arguments, cwd, env, timeout=240):
     return subprocess.run(arguments, cwd=cwd, env=env, check=True, timeout=timeout)
 
 
-def verify_installation(uv, root, base, env):
-    project = tomllib.loads((root / "pyproject.toml").read_text())["project"]
-    stem = project["name"].replace("-", "_") + "-" + project["version"]
-    wheel = root / "dist" / f"{stem}-py3-none-any.whl"
-    source_archive = root / "dist" / f"{stem}.tar.gz"
-    if not wheel.is_file() or not source_archive.is_file():
-        raise ValueError("Build the current wheel and source distribution before checking them.")
-    requirements = base / "requirements.txt"
+def install_dependencies(uv, root, base, python, env, *, development):
+    requirements = base / ("development.txt" if development else "runtime.txt")
     run(
         [
             uv,
             "export",
             "--quiet",
             "--locked",
-            "--all-groups",
+            "--all-groups" if development else "--no-default-groups",
             "--no-emit-project",
             "--output-file",
             str(requirements),
@@ -57,9 +51,6 @@ def verify_installation(uv, root, base, env):
         root,
         env,
     )
-    environment = base / "environment"
-    run([uv, "venv", "--python", sys.executable, str(environment)], base, env)
-    python = environment / "bin/python"
     run(
         [
             uv,
@@ -74,6 +65,19 @@ def verify_installation(uv, root, base, env):
         base,
         env,
     )
+
+
+def verify_installation(uv, root, base, env):
+    project = tomllib.loads((root / "pyproject.toml").read_text())["project"]
+    stem = project["name"].replace("-", "_") + "-" + project["version"]
+    wheel = root / "dist" / f"{stem}-py3-none-any.whl"
+    source_archive = root / "dist" / f"{stem}.tar.gz"
+    if not wheel.is_file() or not source_archive.is_file():
+        raise ValueError("Build the current wheel and source distribution before checking them.")
+    environment = base / "environment"
+    run([uv, "venv", "--python", sys.executable, str(environment)], base, env)
+    python = environment / "bin/python"
+    install_dependencies(uv, root, base, python, env, development=False)
     run([uv, "pip", "install", "--python", str(python), "--no-deps", str(wheel)], base, env)
     with tarfile.open(source_archive) as archive:
         archive.extractall(base, filter="data")
@@ -83,7 +87,8 @@ def verify_installation(uv, root, base, env):
             str(python),
             "-I",
             "-c",
-            "from pathlib import Path; import sys; "
+            "from pathlib import Path; import sys; from importlib.util import find_spec; "
+            "assert find_spec('oci') is None and find_spec('deployment') is None; "
             "import invoice_investigator.web.configuration as m; "
             "p = Path(m.__file__).resolve(); "
             "assert p.is_relative_to(Path(sys.prefix).resolve()) and 'site-packages' in p.parts; "
@@ -111,6 +116,8 @@ def verify_installation(uv, root, base, env):
         )
         if json.loads(result.stdout)["conclusion"] != expected:
             raise ValueError(f"Installed CLI failed expected outcome for {case}.")
+    install_dependencies(uv, root, base, python, env, development=True)
+    run([str(python), "-m", "pytest", "tests/deployment", "-q"], source, env)
     run(
         [
             str(python),
@@ -125,7 +132,8 @@ def verify_installation(uv, root, base, env):
         timeout=900,
     )
     print(
-        "Installed wheel passed both CLI samples and PostgreSQL/Chromium checks outside checkout."
+        "Runtime-only wheel passed CLI samples; extracted deployment and PostgreSQL/Chromium "
+        "checks passed outside checkout."
     )
 
 
