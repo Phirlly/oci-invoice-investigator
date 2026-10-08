@@ -7,8 +7,9 @@ task. The selected agent runtime is **OpenAI Agents SDK for Python**.
 **Implemented locally:** invoice comparison, two synthetic cases, a Django
 reviewer interface, sign-in, protected PDF/record evidence, persistent case
 revisions and duplicate-safe approved follow-up tasks in PostgreSQL.
-**Still unimplemented:** OCI extraction, the agent and guided Resource Manager
-deployment. This is not yet a deployable cloud demo.
+
+**Still unimplemented:** uploads, OCI extraction, the agent and GitHub deployment.
+This is not yet a deployable cloud demo.
 
 ## Run the offline sample
 
@@ -94,38 +95,56 @@ The interface accurately labels its supplied fields and deterministic findings.
 Invoice uploads, extraction and agent execution are not simulated. This command
 verifies the local implementation; it is not the future customer deployment entry.
 
-## Intended cloud deployment
+## Intended GitHub deployment
 
-The frontend uses Django, Bootstrap and PDF.js. It shows the invoice beside its
-evidence and findings, then lets a reviewer approve an exact follow-up proposal
-and inspect the saved task. Frontend assets ship with the application.
-The frontend, background worker and PostgreSQL database will install together.
+The planned experience is **configure once → deploy → open the demo →
+verify/reset/reuse → remove**. Deployment automation is not implemented yet;
+the existing [GitHub workflow](.github/workflows/validation.yml) validates code.
 
-One guided OCI Cloud Shell installer will collect the target compartment/region,
-your chosen sign-in and OpenAI API key. It will enroll secrets automatically,
-run one Resource Manager workload stack, initialize data and load sample cases.
-Non-secret settings will have one centralized `deployment.tfvars`; credentials
-will never go in that file or Terraform state.
+An administrator will configure one GitHub environment with a central non-secret
+`DEPLOYMENT_CONFIG` JSON value and scoped secrets for OCI signing, OpenAI access
+and the chosen presenter password. It requires an authorized OCI deployment
+identity and a repository with supported Actions/environment controls. The release
+will include the exact setup and permission requirements. Authorized FDEs can reuse
+a configured team repository; they also need authorized application sign-in access.
 
-The non-production OCI OC1 design provides an API Gateway HTTPS URL without
-customer DNS. Before reporting **READY**, installation must pass real OCI Document
-Understanding, OpenAI agent/tool execution and an authenticated browser check of
-evidence viewing and duplicate-safe task approval. Then you sign in and demo;
-there is no separate database, secret setup or host configuration step.
+| Operation | Intended result |
+| --- | --- |
+| Deploy | Provision one OCI Resource Manager workload stack, enroll secrets in Vault, install the application/database, create presenter access and load synthetic records |
+| Open demo | Receive the HTTPS URL, username, deployed version and verification status; passwords stay out of output |
+| Verify | Run real login, extraction, agent investigation, evidence viewing and approved-task checks before a meeting |
+| Reset demo | Restore selected synthetic cases while preserving accounts |
+| Remove | Remove owned resources through OCI APIs even when the VM is unavailable; report anything awaiting scheduled deletion |
 
-An OCI account/compartment with the documented deployment permissions and OpenAI
-API access remain prerequisites. Exact release versions, IAM, regional artifact
-access, service capacity and the complete installation path still require testing.
-These cloud installation commitments have not yet been implemented.
+The same workflow will provide Status, Resume, Backup, Restore, Upgrade and
+Recover access. Interrupted operations must resume from durable OCI state.
+Credential recovery/restore uses a replacement password supplied through the
+existing protected GitHub secret; ordinary deploy, verify and reset do not require
+secret edits. Pending service deletion remains visible until confirmed complete.
 
-OCI will host the application and private case/document storage. Selected
-evidence will be sent to OpenAI for inference. Application code will enforce
-calculations, purchasing authority, access and human approval. The only approved
-business action will create an internal demo task; no payment, invoice approval,
-external email or ticket will be sent.
+Configuration is entered once; automation generates Terraform inputs and manages
+the web interface, background worker, PostgreSQL and service connections together.
+Secret values stay out of Terraform state. Routine use requires GitHub Actions and
+the demo page, without Cloud Shell, SSH or manual host configuration. The initial
+scope is a non-production OCI OC1 demo with generated HTTPS access and no customer
+DNS setup. Supported regions, permissions, capacity and installation still need proof.
 
-The same installer will provide status, resume, reset, backup/restore, upgrade
-and cleanup. No cloud release or deployment command is available yet.
+The Django workbench uses Bootstrap and PDF.js to show the invoice beside fields,
+evidence and findings. Users will select samples or upload a supported invoice,
+review cited findings and approve an exact follow-up proposal. Uploads/extraction
+are not implemented; PDF is the current contract and JPEG/PNG support needs its
+own validation and preview tests.
+
+OCI will host the application and private evidence; selected evidence goes to
+OpenAI through one Python Agents SDK agent. Application code enforces calculations,
+purchasing authority, access and human approval. Purchasing records are the shipped
+synthetic registers; an unknown PO yields missing evidence. The approved action
+creates an internal demo task, with no payment or external message delivery.
+
+**READY requires the complete real service and authenticated browser journey to
+pass**, followed by cleanup of isolated acceptance data. The presenter account and
+samples must work when the URL is returned. A successful infrastructure job alone
+does not establish readiness. No cloud release or deployment command is available yet.
 
 ## License
 
